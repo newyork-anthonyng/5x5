@@ -143,6 +143,7 @@ class App extends React.Component {
 
                 <Router>
                     <Home path="/" />
+                    <WorkoutTracker path="/workout/:workoutId" />
                 </Router>
             </div>
         )
@@ -155,25 +156,27 @@ function Home() {
             <h1>Workout</h1>
             <ul>
                 <li>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Exercise</th>
-                                <th>sets and reps</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {futureWorkout.workouts.map((workoutLog, index) => (
-                                <tr key={index}>
-                                    {index === 0 && <td rowSpan="3">{futureWorkout.date}</td>}
-                                    <td>{workoutLog.name}</td>
-                                    <td>{getWorkoutText(workoutLog)}</td>
+                    <Link to="/workout/1">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Exercise</th>
+                                    <th>sets and reps</th>
                                 </tr>
-                            ))}
-                        </tbody>
+                            </thead>
+                            <tbody>
+                                {futureWorkout.workouts.map((workoutLog, index) => (
+                                    <tr key={index}>
+                                        {index === 0 && <td rowSpan="3">{futureWorkout.date}</td>}
+                                        <td>{workoutLog.name}</td>
+                                        <td>{getWorkoutText(workoutLog)}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
 
-                    </table>
+                        </table>
+                    </Link>
                 </li>
                 {workoutHistory.map(workout => (
                     <li key={workout.date}>
@@ -201,6 +204,17 @@ function Home() {
             </ul>
         </div>
     );
+}
+
+function WorkoutTracker(props) {
+    const newDate = new Date();
+    console.log(props);
+    return <div>
+        <Link to="/">Back</Link>
+        <p>{newDate.toString()}</p>
+        <ul>
+        </ul>
+    </div>;
 }
 
 export default App;

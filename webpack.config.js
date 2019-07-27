@@ -31,7 +31,12 @@ module.exports = {
 
     plugins: [
         new HtmlPlugin({
-            template: path.resolve(__dirname, "src/index.html")
+            template: path.resolve(__dirname, "src/index.ejs"),
+            baseUrl: "/"
         })
-    ]
+    ],
+
+    devServer: {
+        historyApiFallback: true
+    }
 }
