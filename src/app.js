@@ -90,7 +90,7 @@ function getWorkoutText(workoutLogs) {
     }
 
     if (lastNumber !== false) {
-        weightText = `${workoutLogs.logs.length}x${lastNumber}`;
+        weightText = `${workoutLogs.logs.length}x${lastNumber || 5}`;
     }
 
     return `${weightText} ${workoutLogs.weight}lb`;
@@ -197,7 +197,6 @@ function Home() {
                                     </tr>
                                 ))}
                             </tbody>
-
                         </table>
                     </li>
                 ))}
@@ -206,15 +205,73 @@ function Home() {
     );
 }
 
-function WorkoutTracker(props) {
-    const newDate = new Date();
-    console.log(props);
-    return <div>
-        <Link to="/">Back</Link>
-        <p>{newDate.toString()}</p>
-        <ul>
-        </ul>
-    </div>;
+class WorkoutTracker extends React.Component {
+    constructor(props) {
+        super(props);
+
+        const newWorkout = {...futureWorkout};
+        newWorkout.workouts.forEach(workout => {
+            workout.logs.forEach((log, index) => {
+                workout.logs[index] = null;
+            });
+        });
+        this.state = {
+            workout: newWorkout
+        };
+
+        this.handleLogClick = this.handleLogClick.bind(this);
+
+        this.descriptionText = futureWorkout.workouts.map(getWorkoutText);
+        this.newWorkoutDate = new Date();
+    }
+
+    handleLogClick(workoutIndex) {
+        return (index) => {
+            return () => {
+                const newState = {...this.state.workout};
+                const newWorkoutLog = {...newState.workouts[workoutIndex]};
+
+                if (newWorkoutLog.logs[index] === null) {
+                    newWorkoutLog.logs[index] = 5;
+                } else if (newWorkoutLog.logs[index] === 1) {
+                    newWorkoutLog.logs[index] = null;
+                } else {
+                    newWorkoutLog.logs[index]--;
+                }
+
+                newState.workouts[workoutIndex] = newWorkoutLog;
+
+                this.setState({
+                    workout: newState
+                })
+            }
+        }
+    }
+
+    render() {
+        return <div>
+            <Link to="/">Back</Link>
+            <p>{this.newWorkoutDate.toString()}</p>
+            <ul>
+                {this.state.workout.workouts.map((workout, workoutIndex) => {
+                    return (
+                        <li key={workout.name}>
+                            <div>
+                                <p>{workout.name}</p>
+                                <p>{this.descriptionText[workoutIndex]}</p>
+
+                                {workout.logs.map((log, index) => {
+                                    return (<button key={index} onClick={this.handleLogClick(workoutIndex)(index)}>
+                                        {log || "Empty"}
+                                    </button>)
+                                })}
+                            </div>
+                        </li>
+                    );
+                })}
+            </ul>
+        </div>;
+    }
 }
 
 export default App;
